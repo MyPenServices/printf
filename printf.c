@@ -1,60 +1,43 @@
 #include "main.h"
 
 /**
- * _printf - produce output on a format
- * @format: format of the string
- * Return: prt
+ * _printf - produces output according to a format
+ * @format: character string
+ *
+ * Return: number of characters
  */
 int _printf(const char *format, ...)
 {
-	int prt = 0;
-	va_list(ap);
+	unsigned int n, cnt;
+	unsigned int num = 0;
 
-	if (format == NULL)
-		return (-1);
+	va_list ap;
 
 	va_start(ap, format);
 
-	while (*format)
+	for (n = 0; format[n] != '\0'; n++)
 	{
-		if (*format != '%')
+		if (format[n] != '%')
 		{
-			write(1, format, 1);
-			prt++;
+			put_char(format[n]);
 		}
-	else
-	{
-		format++;
-		if (*format == '\0')
-			break;
-
-		if (*format == '%')
+		else if (format[n + 1] == '%')
 		{
-			write(1, format, 1);
-			prt++;
+			put_char('%');
 		}
-	else if (*format == 's')
-	{
-		char *sng = va_arg(ap, char*);
-		int len_sng = 0;
-		while (sng[len_sng] != '\0')
-
-			len_sng++;
-		write(1, sng, len_sng);
-
-		prt += len_sng;
-	}
-
-	else if (*format == 'c')
-	{
-		char c = va_arg(ap, int);
-		write(1, &c, 1);
-
-		prt++;
-	}
-	}
-	format++;
+		else if (format[n + 1] == 'c')
+		{
+			put_char(va_arg(ap, int));
+			n++;
+		}
+		else if (format[n + 1] == 's')
+		{
+			cnt = _put(va_arg(ap, char *));
+			n++;
+			num += (cnt - 1);
+		}
+		num++;
 	}
 	va_end(ap);
-	return (prt);
+	return (num);
 }
